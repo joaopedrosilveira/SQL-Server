@@ -37,3 +37,13 @@ END;
 -- Fecha e desaloca
 CLOSE db_cursor;
 DEALLOCATE db_cursor;
+
+
+-- Restore RDS SQL Server
+exec msdb.dbo.rds_restore_database
+    @restore_db_name = 'BAJ_PRD',
+    @s3_arn_to_restore_from = 'arn:aws:s3:::cnseg-sql-hml/BAJ_PRD_FULL.bak';
+
+-- Verificando o andamento do Backup/Restore
+exec msdb.dbo.rds_task_status;
+
