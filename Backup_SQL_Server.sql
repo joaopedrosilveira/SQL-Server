@@ -8,7 +8,7 @@ DECLARE @NomeBanco SYSNAME,
 DECLARE db_cursor CURSOR FOR
 SELECT name
 FROM sys.databases
-WHERE name = 'AUDITORIA_PORTAL_PRD'
+WHERE name not in ('master','model','msdb','tempdb','DB_CNSEG','AUDITORIA_PORTAL_PRD','PORTAL_SOLUCOES_PRD')
   AND state_desc = 'ONLINE';
 
 -- Abre o cursor
@@ -20,7 +20,7 @@ WHILE @@FETCH_STATUS = 0
 BEGIN
     -- Caminho do backup (somente nome do banco)
     SET @CaminhoBackup = 
-        'H:\BACKUP_SRV2042\' + @NomeBanco + '.bak';
+        'G:\Backup_2042_20_02_2026\' + @NomeBanco + '.bak';
 
     -- Comando de backup
     SET @SQL = '
@@ -42,5 +42,3 @@ END;
 -- Finaliza
 CLOSE db_cursor;
 DEALLOCATE db_cursor;
-
-
