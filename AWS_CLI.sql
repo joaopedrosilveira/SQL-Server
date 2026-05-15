@@ -10,3 +10,6 @@ Comando: aws s3 sync H:\BACKUP_SRV2042 s3://bkp-prd-cnseg/BACKUP_SRV2042 --debug
 
 --Exemplo
 aws s3 sync H:\BACKUP_SRV2042 s3://bkp-prd-cnseg/BACKUP_SRV2042 --debug
+
+--Quando a autenticação com o navegador não estiver funcionando
+aws configure sso --use-device-code
