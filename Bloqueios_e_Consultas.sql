@@ -77,3 +77,37 @@ INNER JOIN sys.dm_exec_requests r
 CROSS APPLY sys.dm_exec_sql_text(r.sql_handle) st
 WHERE s.is_user_process = 1
 ORDER BY r.cpu_time DESC;
+
+SELECT 
+       P.spid, 
+       RTRIM(P.status) AS status, 
+       RTRIM(P.loginame) AS loginame, 
+       RTRIM(P.hostname) AS hostname,
+       RTRIM(P.program_name) AS program_name, 
+       P.memusage, 
+       P.cpu, 
+       P.physical_io, 
+       P.blocked, 
+       CASE 
+            WHEN P.dbid = 0 THEN NULL 
+            ELSE DB_NAME(P.dbid) 
+       END AS database_name, 
+       P.cmd AS Command, 
+       P.last_batch, 
+       P.login_time, 
+       P.waittime,
+
+       -- Wait time em segundos
+       CAST(P.waittime / 1000.0 AS DECIMAL(10,2)) AS Time_secs,
+
+       -- Wait time em minutos
+       CAST(P.waittime / 1000.0 / 60.0 AS DECIMAL(10,2)) AS waittime_min,
+
+       RTRIM(P.lastwaittype) AS lastwaittype, 
+       RTRIM(P.nt_domain) AS nt_domain, 
+       RTRIM(P.nt_username) AS nt_username, 
+       P.net_address, 
+       P.net_library 
+FROM sys.sysprocesses P (NOLOCK) 
+WHERE RTRIM(P.status) = 'suspended'
+ORDER BY P.waittime DESC, P.status, P.spid;
