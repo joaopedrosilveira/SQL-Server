@@ -1,3 +1,5 @@
+--EXECUTAR SEMPRE NA MÁQUINA VIRTUAL
+
 -- Declara as variáveis
 DECLARE @NomeBanco varchar(50),
         @CaminhoBackup varchar(200),
