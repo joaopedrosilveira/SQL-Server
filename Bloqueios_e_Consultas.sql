@@ -111,3 +111,19 @@ SELECT
 FROM sys.sysprocesses P (NOLOCK) 
 WHERE RTRIM(P.status) = 'suspended'
 ORDER BY P.waittime DESC, P.status, P.spid;
+
+-- 
+
+--Quantidade de Transações por sessão
+SELECT
+    s.session_id,
+    s.login_name,
+    s.host_name,
+    s.program_name,
+    s.status,
+    s.open_transaction_count AS qtd_transacoes,
+    s.last_request_start_time AS inicio_ultima_requisicao,
+    s.last_request_end_time AS fim_ultima_requisicao
+FROM sys.dm_exec_sessions AS s
+WHERE s.is_user_process = 1
+ORDER BY s.login_name, s.open_transaction_count DESC;
