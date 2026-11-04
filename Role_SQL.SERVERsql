@@ -1,0 +1,45 @@
+--Cria a role RL_MASK em todos os bancos de dados de usuário e concede a permissão ALTER ANY SCHEMA.
+--Adiciona o usuário xxxxxxxxx.xxxxxx à role, caso ainda não seja membro, permitindo que ele altere schemas nesses bancos.
+
+EXEC sp_MSforeachdb '
+USE [?];
+
+IF DB_ID() > 4
+BEGIN
+    -- Criar a role
+    IF NOT EXISTS (
+        SELECT 1
+        FROM sys.database_principals
+        WHERE name = ''RL_MASK''
+          AND type = ''R''
+    )
+    BEGIN
+        CREATE ROLE [RL_MASK];
+    END;
+
+    -- Conceder permissão
+    GRANT ALTER ANY SCHEMA TO [RL_MASK];
+
+    -- Adicionar usuário à role
+    IF EXISTS (
+        SELECT 1
+        FROM sys.database_principals
+        WHERE name = ''caua.albuquerque''
+          AND type IN (''S'', ''U'', ''G'')
+    )
+    AND NOT EXISTS (
+        SELECT 1
+        FROM sys.database_role_members rm
+        INNER JOIN sys.database_principals r
+            ON rm.role_principal_id = r.principal_id
+        INNER JOIN sys.database_principals u
+            ON rm.member_principal_id = u.principal_id
+        WHERE r.name = ''RL_MASK''
+          AND u.name = ''caua.albuquerque''
+    )
+    BEGIN
+        ALTER ROLE [RL_MASK]
+        ADD MEMBER [caua.albuquerque];
+    END;
+END;
+';
